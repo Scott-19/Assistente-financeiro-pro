@@ -1,31 +1,40 @@
-// app.js - Versão Super Simplificada para Celular
-console.log('🇲🇿 FinAssistant Victorino - Carregado!');
+// app.js - Versão Ultra Simplificada e Testada
+console.log('🇲🇿 FinAssistant Victorino - INICIADO!');
 
 // Classe principal
 class FinancialAssistant {
     constructor() {
+        console.log('✅ Classe carregada!');
         this.transacoes = this.carregarDados();
-        this.exibirBoasVindas();
-        this.atualizarDashboard();
+        this.atualizarInterface();
+        this.exibirMensagemBoasVindas();
     }
 
-    exibirBoasVindas() {
+    exibirMensagemBoasVindas() {
+        console.log('🎯 Exibindo boas-vindas...');
         const elemento = document.getElementById('welcome-message');
         if (elemento) {
             elemento.innerHTML = '<strong>Olá! Eu sou seu assistente financeiro criado por Victorino Sérgio! 🇲🇿</strong><br>Como posso ajudar?';
+        } else {
+            console.error('❌ Elemento welcome-message não encontrado!');
         }
     }
 
     adicionarTransacao() {
+        console.log('➕ Tentando adicionar transação...');
+        
         const tipo = document.getElementById('tipo').value;
         const valor = document.getElementById('valor').value;
         const descricao = document.getElementById('descricao').value;
         
         if (!valor || !descricao) {
-            alert('Preencha valor e descrição!');
+            alert('❌ Preencha valor e descrição!');
             return;
         }
 
+        console.log('📝 Dados:', { tipo, valor, descricao });
+
+        // Criar transação
         const transacao = {
             id: Date.now(),
             tipo,
@@ -34,65 +43,86 @@ class FinancialAssistant {
             data: new Date().toLocaleDateString('pt-BR')
         };
 
+        // Adicionar à lista
         this.transacoes.unshift(transacao);
+        
+        // Salvar e atualizar
         this.salvarDados();
-        this.atualizarDashboard();
+        this.atualizarInterface();
         
         // Limpar campos
         document.getElementById('valor').value = '';
         document.getElementById('descricao').value = '';
         
-        alert('Transação adicionada! ✅');
+        alert('✅ Transação adicionada com sucesso!');
+        console.log('💾 Transação salva!');
     }
 
     perguntarAssistente() {
+        console.log('🤖 Iniciando assistente...');
         const pergunta = document.getElementById('pergunta').value;
         
         if (!pergunta) {
-            alert('Digite uma pergunta!');
+            alert('❌ Digite uma pergunta!');
             return;
         }
 
         const respostaElement = document.getElementById('resposta');
-        respostaElement.innerHTML = '🤔 Pensando...';
+        if (!respostaElement) {
+            console.error('❌ Elemento resposta não encontrado!');
+            return;
+        }
+
+        respostaElement.innerHTML = '🤔 Victorino está pensando...';
         respostaElement.style.display = 'block';
 
-        // Resposta simples sem API
+        // Simular resposta
         setTimeout(() => {
             let resposta = '';
             
             if (pergunta.toLowerCase().includes('economizar')) {
-                resposta = '💡 <strong>Dica do Victorino:</strong> Anote todos gastos, corte supérfluos, use regra 50-30-20!';
+                resposta = '💡 <strong>Dica do Victorino:</strong> Comece anotando todos os gastos por uma semana!';
             } else if (pergunta.toLowerCase().includes('investir')) {
-                resposta = '💰 <strong>Estratégia Victorino:</strong> Reserve 10% do salário, comece com poupança!';
+                resposta = '💰 <strong>Estratégia Victorino:</strong> Reserve 10% do seu salário para investimentos!';
             } else {
                 resposta = '🤖 <strong>FinAssistant Victorino:</strong> Posso ajudar com controle de gastos, economia e investimentos!';
             }
             
-            respostaElement.innerHTML = resposta + '<br><br><em>Victorino Sérgio - Moçambique 🇲🇿</em>';
+            respostaElement.innerHTML = resposta;
+            console.log('✅ Resposta exibida!');
         }, 1000);
     }
 
     carregarDados() {
         const dados = localStorage.getItem('financasVictorino');
+        console.log('📂 Dados carregados:', dados ? JSON.parse(dados).length : 0);
         return dados ? JSON.parse(dados) : [];
     }
 
     salvarDados() {
         localStorage.setItem('financasVictorino', JSON.stringify(this.transacoes));
+        console.log('💾 Dados salvos:', this.transacoes.length);
     }
 
-    atualizarDashboard() {
+    atualizarInterface() {
+        console.log('🔄 Atualizando interface...');
+        
+        // Calcular totais
         const receitas = this.transacoes.filter(t => t.tipo === 'receita').reduce((s, t) => s + t.valor, 0);
         const despesas = this.transacoes.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0);
         const saldo = receitas - despesas;
+
+        console.log('📊 Totais:', { saldo, receitas, despesas });
 
         // Atualizar display
         const saldoEl = document.getElementById('saldo');
         const receitasEl = document.getElementById('total-receitas');
         const despesasEl = document.getElementById('total-despesas');
         
-        if (saldoEl) saldoEl.textContent = `R$ ${saldo.toFixed(2)}`;
+        if (saldoEl) {
+            saldoEl.textContent = `R$ ${saldo.toFixed(2)}`;
+            saldoEl.style.color = saldo >= 0 ? 'green' : 'red';
+        }
         if (receitasEl) receitasEl.textContent = `R$ ${receitas.toFixed(2)}`;
         if (despesasEl) despesasEl.textContent = `R$ ${despesas.toFixed(2)}`;
 
@@ -102,10 +132,13 @@ class FinancialAssistant {
 
     atualizarListaTransacoes() {
         const lista = document.getElementById('lista-transacoes');
-        if (!lista) return;
+        if (!lista) {
+            console.error('❌ Elemento lista-transacoes não encontrado!');
+            return;
+        }
 
         if (this.transacoes.length === 0) {
-            lista.innerHTML = '<p style="text-align: center; color: #666;">Nenhuma transação</p>';
+            lista.innerHTML = '<p style="text-align: center; color: #666;">Nenhuma transação cadastrada</p>';
             return;
         }
 
@@ -120,19 +153,35 @@ class FinancialAssistant {
                 </div>
             </div>
         `).join('');
+
+        console.log('✅ Lista atualizada!');
     }
 }
 
-// Criar instância global
-const appVictorino = new FinancialAssistant();
+// Criar instância global quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 DOM Carregado - Iniciando FinAssistant...');
+    window.appVictorino = new FinancialAssistant();
+    console.log('✅ FinAssistant iniciado com sucesso!');
+});
 
 // Funções globais para os botões
 function adicionarTransacao() {
-    appVictorino.adicionarTransacao();
+    if (window.appVictorino) {
+        window.appVictorino.adicionarTransacao();
+    } else {
+        console.error('❌ appVictorino não encontrado!');
+        alert('Erro: Sistema não carregado. Recarregue a página.');
+    }
 }
 
 function perguntarAssistente() {
-    appVictorino.perguntarAssistente();
+    if (window.appVictorino) {
+        window.appVictorino.perguntarAssistente();
+    } else {
+        console.error('❌ appVictorino não encontrado!');
+        alert('Erro: Sistema não carregado. Recarregue a página.');
+    }
 }
 
-console.log('✅ App Victorino pronto!');
+console.log('📄 app.js carregado - aguardando DOM...');
